@@ -1,83 +1,127 @@
 import React, { Component } from 'react';
 import './App.css';
-import Table from './components/Table';
-import Search from './components/Search';
+import { Column, Table } from 'react-virtualized';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import _ from 'lodash';
+import 'react-virtualized/styles.css';
+
 const data = require('./data/data.json');
 
-const byYearGender = _.chain(data)
- .groupBy("Year")
- .map((yearPeople, year) => {
-  return _.reduce(yearPeople, (result, p) => {
-    result[p.Gender]++
-    return result
-  }, {year,"MALE":0,"FEMALE":0,"Total":5})
-}).value()
+const gendersByYear = data.reduce((acc, person) => {
+    const {Year, Gender} = person;
+    const i = acc.findIndex( v => v.Year === Year);
+    const obj = (i !== -1) ? acc[i] : {Year, MALE: 0, FEMALE: 0, max: 20};
+    obj[Gender]++;
+    (i !== -1) ? acc[i] = obj : acc.push(obj);
+    return acc;
+},[]);
 
-console.log(byYearGender)
+const byDeathSort = data.map(person => {
+  let counter = 0;
+  if(person.Death1 === "YES") {
+    counter += 1;
+  }
+  if(person.Death2 === "YES") {
+    counter += 1;
+  }
+  if(person.Death3 === "YES") {
+    counter += 1;
+  }
+  if(person.Death4 === "YES") {
+    counter += 1;
+  }
+  if(person.Death5 === "YES") {
+    counter += 1;
+  }
+  person.deathTotal = counter
+})
 
+// const deathsByName = data.reduce((acc, person) => {
+//     var {name, deathTotal} = person;
+//     var i = acc.findIndex( v => v.name === name);
+//     var obj = (i !== -1) ? acc[i] : {deathTotal: 0, name};
+//     obj[deathTotal]++;
+//     (i !== -1) ? acc[i] = obj : acc.push(obj);
+//     return acc;
+// },[]);
 
-// let d = data.reduce((obj, person) => {
-//     const {Year, Gender} = person;
-//     if (!obj[Year]) {
-//         obj[Year] = {};
-//     }
-//
-//     if (!obj[Year][Gender]) {
-//         obj[Year][Gender] = 0;
-//     }
-//
-//     obj[Year][Gender]++;
-//     return obj;
-// }, {})
+// const deathsByName = _.chain(data)
+//  .groupBy("Year")
+//  .map((yearPeople, year) => {
+//   return _.reduce(yearPeople, (result, p) => {
+//     result[p.deathTotal]++
+//     return result
+//   }, {year,deathTotal:0})
+// }).value()
 
-const data2 = [
-      {year: '1985', Male: 2, Female: 3, Total: 10},
-      {year: '1986', Male: 2, Female: 3},
-      {year: '1987', Male: 2, Female: 3},
-      {year: '1988', Male: 2, Female: 4},
-      {year: '1989', Male: 2, Female: 3},
-      {year: '1990', Male: 1, Female: 3},
-      {year: '1991', Male: 2, Female: 10},
-];
+let deathsByName = [];
 
+for(let i = 0; i < data.length; i++){
+  let total = { name: data[i].name, deaths: data[i].deathTotal};
+  deathsByName.push(total);
+}
+deathsByName = deathsByName.filter(person => person.name)
+                           .sort((a, b) => a.deaths > b.deaths ? -1 : 1)
+
+console.log(deathsByName)
 class App extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      data,
-      searchTerm: ''
+      data
     }
-    this.onSearchChange = this.onSearchChange.bind(this)
-  }
-
-  onSearchChange(event) {
-    this.setState({ searchTerm: event.target.value })
   }
 
   render() {
     return (
       <div className="App">
-        <BarChart width={1000} height={500} data={byYearGender}
+        <BarChart width={1000} height={500} data={gendersByYear}
             margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-         <XAxis dataKey="year"/>
-         <YAxis dataKey="Total"/>
+         <XAxis dataKey="Year"/>
+         <YAxis dataKey="max"/>
          <CartesianGrid strokeDasharray="3 3"/>
          <Tooltip />
          <Legend />
-         <Bar dataKey="MALE" fill="#8884d8" />
          <Bar dataKey="FEMALE" fill="#82ca9d" />
-      </BarChart>
-        <Search
-          value={this.state.searchTerm}
-          onChange={this.onSearchChange}
-        />
+        </BarChart>
         <Table
-          data={data}
-          pattern={this.state.searchTerm}
-        />
+         width={1000}
+         height={1000}
+         headerHeight={20}
+         rowHeight={30}
+         rowCount={this.state.data.length}
+         rowGetter={({ index }) => this.state.data[index]}
+        >
+         <Column
+           label='Name'
+           dataKey='name'
+           width={200}
+         />
+         <Column
+           width={200}
+           label='Gender'
+           dataKey='Gender'
+         />
+         <Column
+           width={100}
+           label='Year'
+           dataKey='Year'
+         />
+         <Column
+           width={500}
+           label='Notes'
+           dataKey='Notes'
+         />
+       </Table>
+       <BarChart width={1400} height={500} data={deathsByName}
+           margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+        <XAxis dataKey="name"/>
+        <YAxis dataKey="deaths"/>
+        <CartesianGrid strokeDasharray="3 3"/>
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="deaths" fill="#82ca9d" />
+       </BarChart>
       </div>
     );
   }

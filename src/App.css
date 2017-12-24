@@ -34,3 +34,11 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/**************
+CHART CSS
+**************/
+
+.recharts-wrapper {
+  margin-bottom: 40px;
+}

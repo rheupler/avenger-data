@@ -11,7 +11,7 @@ function isSearched(searchTerm) {
 
 const Table = ({ data, pattern }) =>
   <div className="table">
-      <div className="table-row">
+    <div className="table-row">
         <span style={{ width: '25%', textAlign: 'left' }}>
           <b>Name</b>
         </span>

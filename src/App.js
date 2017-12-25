@@ -17,50 +17,18 @@ const gendersByYear = data.reduce((acc, person) => {
 
 const byDeathSort = data.map(person => {
   let counter = 0;
-  if(person.Death1 === "YES") {
-    counter += 1;
+  for(let i = 1; i <= 5; i++) {
+    let propName = 'Death' + i;
+    if(person[propName] === "YES") {
+      counter += 1;
+    }
   }
-  if(person.Death2 === "YES") {
-    counter += 1;
-  }
-  if(person.Death3 === "YES") {
-    counter += 1;
-  }
-  if(person.Death4 === "YES") {
-    counter += 1;
-  }
-  if(person.Death5 === "YES") {
-    counter += 1;
-  }
-  person.deathTotal = counter
+  person.deathTotal = counter;
 })
 
-// const deathsByName = data.reduce((acc, person) => {
-//     var {name, deathTotal} = person;
-//     var i = acc.findIndex( v => v.name === name);
-//     var obj = (i !== -1) ? acc[i] : {deathTotal: 0, name};
-//     obj[deathTotal]++;
-//     (i !== -1) ? acc[i] = obj : acc.push(obj);
-//     return acc;
-// },[]);
-
-// const deathsByName = _.chain(data)
-//  .groupBy("Year")
-//  .map((yearPeople, year) => {
-//   return _.reduce(yearPeople, (result, p) => {
-//     result[p.deathTotal]++
-//     return result
-//   }, {year,deathTotal:0})
-// }).value()
-
-let deathsByName = [];
-
-for(let i = 0; i < data.length; i++){
-  let total = { name: data[i].name, deaths: data[i].deathTotal};
-  deathsByName.push(total);
-}
-deathsByName = deathsByName.filter(person => person.name)
-                           .sort((a, b) => a.deaths > b.deaths ? -1 : 1)
+const deathsByName = data.map(obj => ({ name : obj.name, deaths: obj.deathTotal}))
+                         .filter(person => person.deaths)
+                         .sort((a, b) => a.deaths > b.deaths ? -1 : 1)
 
 console.log(deathsByName)
 class App extends Component {
@@ -83,6 +51,7 @@ class App extends Component {
          <Tooltip />
          <Legend />
          <Bar dataKey="FEMALE" fill="#82ca9d" />
+         <Bar dataKey="MALE" fill="purple" />
         </BarChart>
         <Table
          width={1000}

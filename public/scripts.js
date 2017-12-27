@@ -1,11 +1,9 @@
 setTimeout(() => {
   const bars = document.querySelector('.chart1');
   const bars2 = document.querySelector('.chart2');
-  console.log(bars2)
 
   function barClick(e) {
     e.preventDefault();
-    console.log(e.target.attributes.fill.nodeValue)
     if(!e.target.isClicked && !e.target.attributes.stroke) {
       e.target.style.fill = 'red'
       e.target.isClicked = true;

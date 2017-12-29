@@ -5,10 +5,10 @@ setTimeout(() => {
   function barClick(e) {
     e.preventDefault();
     if(!e.target.isClicked && !e.target.attributes.stroke) {
-      e.target.style.fill = 'red'
+      e.target.style.fill = 'red';
       e.target.isClicked = true;
     } else if(e.target.isClicked && !e.target.attributes.stroke){
-      e.target.style.fill = e.target.attributes.fill.nodeValue
+      e.target.style.fill = e.target.attributes.fill.nodeValue;
       e.target.isClicked = false;
     }
   }

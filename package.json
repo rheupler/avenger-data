@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "install": "^0.10.2",
+    "jest": "^22.0.4",
+    "jest-cli": "^22.0.4",
     "lodash": "^4.17.4",
     "npm": "^5.6.0",
     "react": "^16.2.0",

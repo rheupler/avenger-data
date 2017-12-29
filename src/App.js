@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import './scripts.js';
 import Table from './components/Table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import 'react-virtualized/styles.css';
